@@ -11,10 +11,18 @@ const express = require('express');
 const app = express();
 // const transcribeController = require('./controllers/transcribe-controller');
 
-// app.use(express.json({type: 'application/json', limit: "500mb"}));
+app.use(express.json({type: 'application/json', limit: "500mb"}));
 
 app.route('/').post((req, res) => {
-    console.log(req);
+    console.log(req.body);
+    switch (req.body.type) {
+	case 'url_verification':
+            res.send({challenge: req.body.challenge});
+	    break;
+        default:
+            res.status(200).send();
+	    break;
+    }
 });
 
 app.listen(8080, () => {
