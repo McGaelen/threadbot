@@ -14,16 +14,26 @@ const app = express();
 app.use(express.json({type: 'application/json', limit: "500mb"}));
 
 app.route('/').post((req, res) => {
-    console.log(req.body);
-    switch (req.body.type) {
-	case 'url_verification':
-            res.send({challenge: req.body.challenge});
-	    break;
-        default:
-            res.status(200).send();
-	    break;
+    if (req.body.type === 'url_verification') {
+        console.log(`Received url_verifcation`);
+        console.log(`   token: ${req.body.token}`);
+        console.log(`   challenge: ${req.body.challenge}`);
+        res.send({challenge: req.body.challenge});
+    } else {
+        processEventCallback(req.body.event);
+        res.status(200).send();
     }
 });
+
+function processEventCallback(event) {
+    switch (event.type) {
+        case 'message':
+            console.log(`message sent to channel: ${event.text}`);
+            break;
+        default:
+            break;
+    }
+}
 
 app.listen(8080, () => {
     console.log('Listening on port 8080...');
